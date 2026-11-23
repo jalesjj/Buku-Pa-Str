@@ -1,0 +1,71 @@
+%!TeX root = ../main_buku.tex
+%============================================================
+% BAB 1: PENDAHULUAN
+% Struktur:
+%   Proposal/Progres (\ifbukupa = false):
+%     1.1 Latar Belakang, 1.2 Permasalahan, 1.3 Tujuan,
+%     1.4 Manfaat, 1.5 Sistematika Penulisan
+%   Buku PA (\ifbukupa = true):
+%     1.1 Latar Belakang, 1.2 Permasalahan, 1.3 Batasan Masalah,
+%     1.4 Tujuan, 1.5 Manfaat, 1.6 Sistematika Penulisan
+%============================================================
+\chapter{PENDAHULUAN}
+
+\section{LATAR BELAKANG}
+
+Deskripsikan \cite{Opara} latar belakang dari permasalahan yang akan diangkat pada penelitian proyek
+akhir. Latar belakang berisi penjelasan dari \textit{Problem Domain} yang termuat pada
+judul penelitian. Misalkan penulis mengambil suatu judul ``Deteksi Penyakit Kanker
+Dengan Sistem Pakar Berbasis Fuzzy'', maka \textit{Problem Domain}-nya adalah tentang
+penyakit kanker, sehingga penulis dapat menceritakan tingkat urgensinya seperti
+kenaikan jumlah penderita dari tahun ke tahun. Latar belakang yang baik berisikan
+\textit{problem domain} yang mempunyai tingkat urgensi tinggi.
+
+% Contoh kutipan tidak langsung (parafrase):
+% Menurut penelitian sebelumnya, hal ini sangat penting dilakukan \cite{}.
+
+\section{PERMASALAHAN}
+
+Deskripsikan dengan jelas permasalahan yang ingin diteliti pada proyek akhir.
+Permasalahan berisi penjelasan dari \textit{Problem} yang termuat pada judul penelitian.
+Deskripsi masalah sebaiknya dituliskan dengan gaya bahasa deskriptif. Uraian
+permasalahan yang baik manakala penulis berhasil meyakinkan pembaca tentang seberapa
+tinggi tingkat urgensi dari permasalahan tersebut, sehingga pembaca yakin bahwa
+permasalahan tersebut membutuhkan solusi dari penelitian proyek akhir.
+
+% Batasan Masalah: hanya tampil di Buku PA
+\ifbukupa
+\section{BATASAN MASALAH}
+
+Deskripsikan dengan jelas hal-hal yang perlu dibatasi dari permasalahan yang diselesaikan
+dalam proyek akhir. Deskripsi batasan masalah sebaiknya dituliskan dalam bentuk
+\textit{itemik}.
+
+\fi
+
+\section{TUJUAN}
+
+Deskripsikan dengan jelas tujuan penelitian proyek akhir yang diangkat. Tujuan proyek
+akhir harus jelas, singkat, dan mengandung klaim orisinalitas. Tuliskan secara
+argumentatif apa saja fitur-fitur yang ditawarkan pada penelitian sebagai solusi baru
+untuk mengklaim orisinalitas. Tujuan sebaiknya diawali dengan kalimat pembuka seperti:
+
+``Penelitian proyek akhir ini mengajukan suatu pendekatan baru untuk \ldots dengan
+mempresentasikan \ldots''. Kalimat-kalimat selanjutnya kemudian memperjelas
+fitur-fitur unik yang ditawarkan pada penelitian sebagai suatu solusi untuk menjawab
+permasalahan.
+
+\section{MANFAAT}
+
+Uraikan kontribusi proyek akhir pada pengembangan ilmu pengetahuan teknologi dan seni,
+pemecahan masalah pembangunan, atau pengembangan kelembagaan. Kontribusi sebaiknya
+bersifat spesifik, tidak terlalu luas, dan tidak terkesan mengada-ada. Jelaskan siapa
+yang mendapatkan manfaat dari penelitian dan dalam bentuk apa manfaatnya.
+
+\section{SISTEMATIKA PENULISAN}
+
+Jelaskan tentang sistematika pembahasan dalam buku proyek akhir yang meliputi:
+
+% File sistematika ditentukan oleh runner (main_*.tex) via \SistematikaFile.
+% Proposal: pages/sistematika_3bab | Progres/Buku: pages/sistematika_5bab
+\input{\SistematikaFile}
