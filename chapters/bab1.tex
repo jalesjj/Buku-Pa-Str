@@ -13,54 +13,55 @@
 
 \section{LATAR BELAKANG}
 
-Deskripsikan \cite{Opara} latar belakang dari permasalahan yang akan diangkat pada penelitian proyek
-akhir. Latar belakang berisi penjelasan dari \textit{Problem Domain} yang termuat pada
-judul penelitian. Misalkan penulis mengambil suatu judul ``Deteksi Penyakit Kanker
-Dengan Sistem Pakar Berbasis Fuzzy'', maka \textit{Problem Domain}-nya adalah tentang
-penyakit kanker, sehingga penulis dapat menceritakan tingkat urgensinya seperti
-kenaikan jumlah penderita dari tahun ke tahun. Latar belakang yang baik berisikan
-\textit{problem domain} yang mempunyai tingkat urgensi tinggi.
+Perkembangan Large Language Model (LLM) seperti ChatGPT, Gemini, dan LLaMA telah mengubah cara mahasiswa dalam mengerjakan tugas tertulis di perguruan tinggi. Model-model ini mampu menghasilkan teks yang koheren dan gramatikal sehingga sulit dibedakan dari tulisan manusia secara kasat mata \cite{Farrell2026}. Di Politeknik Elektronika Negeri Surabaya (PENS), tugas essay berbahasa Inggris menjadi salah satu bentuk penilaian kompetensi menulis mahasiswa yang berpotensi terdampak oleh penggunaan LLM tanpa pengawasan yang memadai.
+\par Permasalahan utama yang dihadapi adalah sulitnya dosen membedakan secara manual antara tulisan orisinal mahasiswa dan teks yang dihasilkan oleh LLM. Detektor AI komersial seperti GPTZero yang tersedia saat ini bersifat black-box, tidak dapat menjelaskan dasar keputusannya, dan rentan terhadap false positive terutama pada penulis non-native English \cite{Jin2027}. Kondisi ini menjadi perhatian serius karena mahasiswa PENS menulis dalam bahasa Inggris sebagai bahasa kedua, sehingga pola penulisan mereka berpotensi salah terklasifikasi sebagai teks buatan AI.
+\par Apabila tidak ditangani, dampaknya terhadap integritas akademik akan semakin meluas. \cite{Alhijawi2026} menunjukkan bahwa beberapa detektor komersial hanya mencapai akurasi sekitar 49,5\% pada konten akademik nyaris setara tebakan acak. Sementara itu \cite{Farrell2026} membuktikan bahwa model semantik semata pun masih salah mengklasifikasikan ratusan sampel teks AI sebagai tulisan manusia.
+\par Berbagai pendekatan telah dikembangkan, mulai dari machine learning klasik seperti SVM dan Random Forest berbasis TF-IDF yang mencapai akurasi hingga 91,06\% \cite{H2025}, model deep learning berbasis transformer seperti BERT dan DistilBERT, hingga pendekatan hibrida yang menggabungkan fitur stilometri dengan transformer embedding yang menghasilkan akurasi 98,9\% \cite{Farrell2026}. Namun, sebagian besar penelitian menggunakan dataset dari penutur asli bahasa Inggris dan belum teruji pada korpus spesifik mahasiswa non-native English. Selain itu, pendekatan berbasis deep learning cenderung tidak transparan sehingga hasilnya sulit diinterpretasikan oleh pengajar \cite{Teja2025}. 
+\par Penelitian ini mengusulkan sistem deteksi teks buatan AI pada tugas essay bahasa Inggris mahasiswa menggunakan analisis stilometri dan machine learning. Fitur stilometri yang diekstraksi mencakup 18 fitur linguistik yang dikategorikan ke dalam empat lapisan: fonologis, morfologis, sintaktis, dan leksikal, yang kemudian digunakan untuk melatih model Random Forest sebagai pendekatan utama karena interpretabilitasnya melalui feature importance \cite{Farrell2026}, \cite{Jin2027}. Model BERT fine-tuned disertakan sebagai pembanding untuk mengevaluasi efektivitas kedua pendekatan pada korpus essay mahasiswa PENS secara kuantitatif.
 
 % Contoh kutipan tidak langsung (parafrase):
 % Menurut penelitian sebelumnya, hal ini sangat penting dilakukan \cite{}.
 
 \section{PERMASALAHAN}
 
-Deskripsikan dengan jelas permasalahan yang ingin diteliti pada proyek akhir.
-Permasalahan berisi penjelasan dari \textit{Problem} yang termuat pada judul penelitian.
-Deskripsi masalah sebaiknya dituliskan dengan gaya bahasa deskriptif. Uraian
-permasalahan yang baik manakala penulis berhasil meyakinkan pembaca tentang seberapa
-tinggi tingkat urgensi dari permasalahan tersebut, sehingga pembaca yakin bahwa
-permasalahan tersebut membutuhkan solusi dari penelitian proyek akhir.
+Berdasarkan kondisi pelaksanaan penilaian tugas essay bahasa Inggris mahasiswa di PENS, permasalahan yang diidentifikasi adalah sebagai berikut:
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+  \item Dosen kesulitan membedakan secara manual tulisan orisinal mahasiswa dengan teks yang dihasilkan LLM, karena model generatif modern mampu menghasilkan teks yang koheren dan gramatikal sehingga tidak dapat dibedakan secara kasat mata.
+  \item Detektor AI komersial yang tersedia bersifat black-box, tidak transparan dalam dasar keputusannya, dan rentan menghasilkan false positive terutama pada penulis non-native English seperti mahasiswa Indonesia.
+  \item Belum tersedia model deteksi yang dikalibrasi pada karakteristik korpus essay mahasiswa PENS, sehingga penggunaan model generik berpotensi menghasilkan akurasi yang tidak optimal pada konteks spesifik ini.
+\end{enumerate}
+
 
 % Batasan Masalah: hanya tampil di Buku PA
 \ifbukupa
 \section{BATASAN MASALAH}
 
-Deskripsikan dengan jelas hal-hal yang perlu dibatasi dari permasalahan yang diselesaikan
-dalam proyek akhir. Deskripsi batasan masalah sebaiknya dituliskan dalam bentuk
-\textit{itemik}.
+Agar pembahasan dalam proyek akhir ini lebih terarah dan tidak meluas dari tujuan yang telah ditetapkan, batasan masalah ditentukan sebagai berikut:
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+    \item Sistem yang dikembangkan difokuskan pada klasifikasi biner teks essay berbahasa Inggris, yaitu tulisan mahasiswa dan teks yang dihasilkan oleh ChatGPT atau Gemini dengan prompt setara.
+    \item Fitur yang diekstraksi dibatasi pada 18 fitur stilometri yang dapat diinterpretasikan, meliputi fitur fonologis (voiced consonant ratio, voiceless consonant ratio, average primary stress ratio), morfologis (rasio noun, pronoun, verb, auxiliary verb, preposition, dan conjunction), sintaktis (adjective modifier count, direct object count, conjunction usage count, prepositional object count, preposition usage count), serta leksikal (difficult word ratio, content-to-function word ratio, average word length, dan lexical richness).
+    \item Dataset yang digunakan merupakan korpus yang dikumpulkan dari tugas essay mahasiswa PENS, tidak menggunakan dataset publik umum berbahasa Inggris dari penutur asli.
+\end{enumerate}
 
 \fi
 
 \section{TUJUAN}
 
-Deskripsikan dengan jelas tujuan penelitian proyek akhir yang diangkat. Tujuan proyek
-akhir harus jelas, singkat, dan mengandung klaim orisinalitas. Tuliskan secara
-argumentatif apa saja fitur-fitur yang ditawarkan pada penelitian sebagai solusi baru
-untuk mengklaim orisinalitas. Tujuan sebaiknya diawali dengan kalimat pembuka seperti:
-
-``Penelitian proyek akhir ini mengajukan suatu pendekatan baru untuk \ldots dengan
-mempresentasikan \ldots''. Kalimat-kalimat selanjutnya kemudian memperjelas
-fitur-fitur unik yang ditawarkan pada penelitian sebagai suatu solusi untuk menjawab
-permasalahan.
+Berdasarkan perumusan masalah yang ada, tujuan dari penelitian dan pengembangan sistem ini adalah:
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+    \item Membangun model klasifikasi biner yang mampu membedakan teks essay tulisan mahasiswa dengan teks yang dihasilkan LLM pada konteks tugas bahasa Inggris mahasiswa PENS.
+    \item Mengekstraksi dan menganalisis fitur stilometri paling diskriminatif menggunakan feature importance Random Forest sehingga keputusan model dapat dijelaskan secara transparan kepada pengajar.
+    \item Mengevaluasi dan membandingkan performa model Random Forest berbasis fitur stilometri dengan model BERT fine-tuned pada korpus essay mahasiswa PENS menggunakan metrik akurasi, presisi, recall, dan F1-score.
+\end{enumerate}
 
 \section{MANFAAT}
 
-Uraikan kontribusi proyek akhir pada pengembangan ilmu pengetahuan teknologi dan seni,
-pemecahan masalah pembangunan, atau pengembangan kelembagaan. Kontribusi sebaiknya
-bersifat spesifik, tidak terlalu luas, dan tidak terkesan mengada-ada. Jelaskan siapa
-yang mendapatkan manfaat dari penelitian dan dalam bentuk apa manfaatnya.
+Berdasarkan tujuan yang telah ditetapkan, manfaat yang diharapkan dari keberadaan sistem ini adalah:
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+    \item Membantu dosen dalam mendeteksi penggunaan LLM pada tugas essay bahasa Inggris secara otomatis dan efisien tanpa harus mengandalkan penilaian manual semata.
+    \item Memberikan transparansi keputusan deteksi melalui visualisasi feature importance sehingga pengajar dapat memahami dan mempertanggungjawabkan hasil klasifikasi secara akademik.
+    \item Menyediakan model deteksi dan dataset berlabel yang dikalibrasi untuk konteks mahasiswa PENS sebagai baseline bagi penelitian lanjutan di bidang deteksi teks buatan AI.
+\end{enumerate}
 
 \section{SISTEMATIKA PENULISAN}
 
