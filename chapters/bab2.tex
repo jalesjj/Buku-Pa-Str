@@ -13,55 +13,335 @@ bertujuan menyelesaikan \textit{Problem} tersebut.
 
 \section{DESKRIPSI PERMASALAHAN}
 
-Deskripsikan dengan jelas dan detail dari permasalahan yang ingin diselesaikan pada
-proyek akhir. Permasalahan berisi penjelasan dari \textit{Problem} yang termuat pada
-judul kegiatan. Deskripsi masalah sebaiknya dituliskan dengan gaya bahasa deskriptif.
-Deskripsi masalah boleh memuat gambar, tabel, dan skema tertentu untuk mengilustrasikan
-permasalahan.
+Permasalahan yang dihadapi adalah belum tersedianya sistem otomatis yang dapat membedakan tulisan orisinal mahasiswa dengan teks yang dihasilkan oleh Large Language Model (LLM) pada tugas essay bahasa Inggris di PENS. Saat ini dosen hanya dapat mengandalkan penilaian manual, yang tidak efisien dan rentan terhadap subjektivitas, mengingat model generatif seperti ChatGPT dan Gemini mampu menghasilkan teks yang koheren dan gramatikal sehingga sulit dibedakan secara kasat mata. Detektor AI komersial yang tersedia seperti GPTZero bersifat black-box dan tidak dapat menjelaskan dasar keputusannya, sehingga sulit dipertanggungjawabkan secara akademik. Kondisi ini diperparah oleh kecenderungan detektor komersial menghasilkan false positive pada penulis non-native English seperti mahasiswa Indonesia, yang pola penulisannya berbeda dari penulis asli bahasa Inggris. Ketiadaan sistem deteksi yang transparan, akurat, dan dikalibrasi pada konteks spesifik mahasiswa PENS menyebabkan pengawasan integritas akademik pada tugas essay menjadi tidak terukur dan berpotensi tidak adil bagi mahasiswa yang menulis secara orisinal.
 
 \section{TEORI PENUNJANG}
 
-Uraikan dengan jelas dasar teori yang menunjang penelitian proyek akhir. Teori penunjang
-menguraikan dasar-dasar teori, temuan, dan bahan dari pustaka ilmiah lain yang dijadikan
-landasan untuk melakukan proyek akhir yang diusulkan. Uraian dalam Teori Penunjang
-menjadi landasan untuk menyusun kerangka atau konsep yang akan digunakan dalam proyek
-akhir. Jangan lupa untuk menyebutkan semua kutipan dengan rujukan yang jelas seperti
-ini \cite{buku_contoh}.
+\subsection{AI Generrated Text}
 
-\subsection{Sub-Teori Pertama}
+AI-generated text adalah teks yang dihasilkan secara otomatis oleh model kecerdasan buatan, khususnya Large Language Model (LLM), tanpa keterlibatan langsung manusia dalam penulisannya. Model-model seperti ChatGPT, Gemini, dan LLaMA mampu menghasilkan teks yang koheren, gramatikal, dan kontekstual berdasarkan instruksi (prompt) yang diberikan pengguna \cite{Farrell2026}. Kemampuan ini mendorong penggunaan LLM secara luas, termasuk dalam penulisan tugas akademik, yang menimbulkan tantangan baru dalam verifikasi orisinalitas karya tulis mahasiswa
 
-Uraikan sub-teori pertama di sini.
+\subsection{Stilometri}
 
-\subsection{Sub-Teori Kedua}
+Stilometri adalah analisis statistik terhadap gaya penulisan seseorang menggunakan fitur linguistik yang terukur secara kuantitatif. Bidang ini digunakan secara luas dalam atribusi kepengarangan, deteksi plagiarisme, dan kini deteksi teks buatan AI. Asumsi dasarnya adalah bahwa setiap penulis memiliki "sidik jari linguistik" yang dapat diukur melalui distribusi fitur-fitur seperti pilihan kata, struktur kalimat, dan frekuensi kelas kata. \cite{Jaashan2025}, \cite{Tschuggnall2015}, \cite{Of2026}
 
-Uraikan sub-teori kedua di sini.
+\subsection{Lapisan Fonologis}
+
+Lapisan fonologis terdiri atas tiga fitur yang mengukur pola bunyi pada teks tertulis. Nama dan konteks ketiga fitur disebut dalam jurnal \cite{Farrell2026}.
+
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+\item Voiced Consonant Ratio
+
+Voiced consonant ratio mengukur proporsi konsonan bersuara terhadap total karakter alfabet dalam teks. Konsonan bersuara dihasilkan dengan getaran pita suara, seperti /b/, /v/, /d/, /g/, /z/, /j/, /m/, /n/, /l/, /r/, /w/, /y/. Contoh perhitungan voiced consonant ratio sebagai berikut.
+\begin{equation}
+\label{eq:1}
+\begin{split}
+\text{Voiced\_Ratio}=\frac{\left|\left\{c\in H\mid c\in \text{VOICED}\right\}\right|}{\left|huruf\right|}
+\end{split}
+\end{equation}
+
+\item Voiceless Consonant Ratio
+
+Voiceless consonant ratio mengukur proporsi konsonan tak bersuara terhadap total karakter alfabet. Konsonan tak bersuara dihasilkan tanpa getaran pita suara, seperti /p/, /f/, /t/, /k/, /s/, /h/, /x/ \cite{Farrell2026}.
+\begin{equation}
+\label{eq:2}
+\begin{split}
+\text{Voiceless\_Ratio}=\frac{\left|\left\{c\in H\mid c\in VOICELESS\right\}\right|}{\left|huruf\right|}
+\end{split}
+\end{equation}
+
+\item Vowel Ratio
+Vowel ratio mengukur proporsi huruf vokal terhadap total karakter alfabet. Dalam implementasi ini, fitur ini digunakan sebagai proksi untuk average primary stress ratio yang disebut pada jurnal \cite{Farrell2026} Keduanya tidak identik.
+\begin{equation}
+\label{eq:3}
+\begin{split}
+\text{Vowel\_Ratio}=\frac{\left|\left\{c\in H\mid c\in VOWELS\right\}\right|}{\left|huruf\right|}
+\end{split}
+\end{equation}
+
+\end{enumerate}
+
+\subsection{Lapisan Morfologis}
+
+Part-of-Speech (POS) tagging adalah proses pelabelan setiap kata dalam teks dengan kategori gramatikalnya. Semua fitur morfologis dihitung sebagai rasio terhadap total kata alfabet (N) menggunakan NLTK Penn Treebank tagset. \cite{Jaashan2025}\cite{Irsyad2026}
+
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+  \item Noun Ratio
+  
+  Rasio kata benda (NOUN) digunakan sebagai fitur morfologis utama \cite{Jaashan2025}. Implementasi menggunakan t.startswith('NN') sehingga mencakup empat tag Penn Treebank: NN (Noun, singular), NNS (Noun, plural), NNP (Proper noun, singular), dan NNPS (Proper noun, plural).
+  \begin{equation}
+  \label{eq:4}
+  \begin{split}
+\text{noun\_ratio}=\frac{\text{count}\left(\text{NN}+\text{NNS}+\text{NNP}+\text{NNPS}\right)}{N}
+  \end{split}
+  \end{equation}
+  
+  \item Pronoun Ratio
+  
+  Rasio pronoun digunakan sebagai fitur morfologis dalam analisis stilometri teks AI \cite{Jaashan2025}. Implementasi mencakup tiga tag: PRP (Personal pronoun), PRP\$ (Possessive pronoun), dan WP (Wh-pronoun).
+  \begin{equation}
+  \label{eq:5}
+  \begin{split}
+\text{prounoun\_ratio}=\frac{\text{count}\left(PRP+PRP\$+WP\right)}{N}
+  \end{split}
+  \end{equation}
+
+  \item Verb Ratio
+  
+    Rasio kata kerja digunakan sebagai fitur morfologis dalam deteksi teks AI \cite{Jaashan2025}\cite{Irsyad2026}. Implementasi menggunakan t.startswith('VB') yang mencakup enam tag: VB (Verb, base form), VBD (Verb, past tense), VBG (Verb, gerund), VBN (Verb, past participle), VBP (Verb, non-3rd person singular present), dan VBZ (Verb, 3rd person singular present).
+    \begin{equation}
+  \label{eq:6}
+  \begin{split}
+\text{prounoun\_ratio}=\frac{\text{count}\left(PRP+PRP\$+WP\right)}{N}
+  \end{split}
+  \end{equation}
+
+  \item Auxiliary Ratio
+  
+  Kategori auxiliary digunakan sebagai fitur morfologis \cite{Jaashan2025}. Implementasi menggunakan tag MD (Modal auxiliary) yang mencakup kata-kata seperti can, will, should, may, must, would, could.
+  \begin{equation}
+  \label{eq:7}
+  \begin{split}
+\text{aux\_ratio}=\frac{\text{count}\left(MD\right)}{N}\text{aux\_ratio}=\frac{\text{count}\left(MD\right)}{N}
+  \end{split}
+  \end{equation}
+
+  \item Preposition Ratio
+  
+  Fitur adposisi digunakan dalam analisis stilometri teks AI \cite{Jaashan2025}. Implementasi menggunakan tag IN (Preposition or subordinating conjunction) dari NLTK Penn Treebank.
+  \begin{equation}
+  \label{eq:8}
+  \begin{split}
+\text{prep\_ratio}=\frac{\text{count}\left(IN\right)}{N}
+  \end{split}
+  \end{equation}
+
+  \item Conjunction Ratio
+  
+  Konjungsi koordinatif digunakan sebagai fitur morfologis dalam stilometri \cite{Jaashan2025}. Implementasi menggunakan tag CC (Coordinating conjunction) yang mencakup kata-kata seperti and, but, or, nor, for, yet, so.
+  \begin{equation}
+  \label{eq:9}
+  \begin{split}
+\text{conj\_ratio}=\frac{\text{count}\left(CC\right)}{N}
+  \end{split}
+  \end{equation}
+
+  \item Adverb Ratio
+  
+  Adverbia merupakan kata yang memodifikasi verba, adjektiva, atau klausa lain. Penelitian menunjukkan bahwa teks AI cenderung overuse adverbia akademik seperti significantly, particularly, dan notably sebagai penanda kepastian berlebihan \cite{Analysis}. Fitur ini dihitung sebagai rasio token berkategori RB (Adverb), RBR (Adverb, comparative), dan RBS (Adverb, superlative) terhadap total kata dalam teks menggunakan Penn Treebank POS tagging melalui NLTK.
+  \begin{equation}
+  \label{eq:10}
+  \begin{split}
+\text{adverb\_ratio} = \frac{\sum_{w \in \text{words}} \mathbf{1}\left[\text{POS}(w) \in \{\text{RB}, \text{RBR}, \text{RBS}\}\right]}{|\text{words}|}
+  \end{split}
+  \end{equation}
+
+\end{enumerate}
+
+\subsection{Lapisan Sintaktis}
+
+Dependency parsing adalah proses analisis struktur gramatikal kalimat dengan mengidentifikasi relasi ketergantungan antar kata. spaCy digunakan untuk dependency parsing dalam sistem deteksi teks AI berbasis stilometri \cite{Jaashan2025}\cite{Of2026}.
+
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+  \item Adjective Modifier
+  
+  Relasi amod menghubungkan adjektiva dengan nomina yang dimodifikasinya \cite{Jaashan2025}.
+  \begin{equation}
+  \label{eq:11}
+  \begin{split}
+\mathrm{adj}\_\mathrm{modifier}=\operatorname{count}{\left(\mathrm{dep}=\text{"amod"}\right)}
+  \end{split}
+  \end{equation}
+
+  \item Direct Object
+  
+  Relasi dobj menghubungkan predikat verbal dengan objek langsungnya \cite{Jaashan2025}.
+  \begin{equation}
+  \label{eq:12}
+  \begin{split}
+direct\_obj=\operatorname{count}{\left(\mathrm{dep}=\text{"dobj"}\right)}
+  \end{split}
+  \end{equation}
+
+  \item Conjunction Usage
+  
+  Relasi conj menghubungkan dua elemen koordinatif \cite{Jaashan2025}.
+  \begin{equation}
+  \label{eq:13}
+  \begin{split}
+conj\_usage=\operatorname{count}{\left(\mathrm{dep}=\text{"conj"}\right)}
+  \end{split}
+  \end{equation}
+  
+  \item Prepositional Object
+  
+  Relasi pobj menghubungkan preposisi dengan nomina yang mengikutinya \cite{Jaashan2025}.
+  \begin{equation}
+  \label{eq:14}
+  \begin{split}
+prep\_obj=\operatorname{count}{\left(\mathrm{dep}=\text{"pobj"}\right)}
+  \end{split}
+  \end{equation}
+  
+  \item Preposition
+  
+  Relasi prep menghubungkan nomina atau verba dengan frasa preposisional \cite{Of2026}.
+  \begin{equation}
+  \label{eq:15}
+  \begin{split}
+prep\_obj=\operatorname{count}{\left(\mathrm{dep}=\text{"prep"}\right)}
+  \end{split}
+  \end{equation}
+  
+\end{enumerate}
+
+\subsection{Lapisan Leksikal}
+
+Lapisan leksikal mengukur karakteristik kosakata dan kompleksitas kata yang digunakan dalam teks. Analisis leksikal dalam stilometri mencakup distribusi kata sulit, perbandingan kata bermakna dengan kata tugas, panjang rata-rata kata, dan kekayaan kosakata. Keempat dimensi ini terbukti membedakan tulisan manusia dan teks AI secara statistik, karena model bahasa besar cenderung menghasilkan kosakata yang lebih kompleks, kata yang lebih panjang, dan variasi leksikal yang lebih tinggi dibandingkan penulis manusia \cite{Jaashan2025}.
+
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+  \item Difficult Word Ratio
+  
+  Difficult word ratio mengukur proporsi kata sulit terhadap total kata alfabet \cite{Farrell2026}.
+  \begin{equation}
+  \label{eq:16}
+  \begin{split}
+difficult\_ratio=\frac{\text{count}\left(MD\right)}{N}
+  \end{split}
+  \end{equation}
+
+  \item Content-to-Function Word Ratio
+  
+  Function word ratio dan content word ratio digunakan sebagai fitur leksikal dalam analisis stilometri teks AI \cite{Jaashan2025}. Implementasi menggunakan NLTK stopwords sebagai proksi function words.
+  \begin{equation}
+  \label{eq:17}
+  \begin{split}
+\mathrm{cf}\_\mathrm{ratio}=\frac{\left|W_{\text{content}}\right|}{\left|W_{\text{function}}\right|}
+  \end{split}
+  \end{equation}
+
+  \item Average Word Length
+  
+  Average Word Length didefinisikan sebagai total karakter dibagi total kata (AWL = C/N) \cite{Alam2026}. Implementasi menggunakan np.mean([len(w) for w in words]) yang secara matematis.
+  \begin{equation}
+  \label{eq:18}
+  \begin{split}
+  \mathrm{AWL}=\frac{C}{N}=\frac{1}{N}\sum \left|w_{i}\right|
+  \end{split}
+  \end{equation}
+
+  \item Lexical Richness
+  
+  Type-Token Ratio (TTR) adalah ukuran kekayaan leksikal yang mengukur proporsi kata unik (types) terhadap total kata (tokens) \cite{Tschuggnall2015}\cite{Gunawan2021}.
+  \begin{equation}
+  \label{eq:19}
+  \begin{split}
+  \mathrm{cf}\_\mathrm{ratio}=\frac{\left|V\right|}{N}
+  \end{split}
+  \end{equation}
+
+  \item Contaction
+  
+  Kontraksi seperti don’t, it’s, dan I’ve merupakan penanda informalitas dalam tulisan. Penulis manusia secara alami menggunakan kontraksi dalam ekspresi sehari-hari, sedangkan teks yang dihasilkan AI cenderung menggunakan bentuk formal penuh seperti do not dan it is \cite{Analysis}. Fitur ini dihitung dengan mendeteksi token kontraksi hasil tokenisasi NLTK maupun bentuk kontraksi tanpa apostrof.
+  \begin{equation}
+  \label{eq:20}
+  \begin{split}
+  \text{contraction\_count} = \sum_{t \in \text{tokens}} \mathbf{1}\left[t \in T_{\text{apos}}\right] + \sum_{w \in \text{words}} \mathbf{1}\left[w \in T_{\text{nonapos}}\right]
+  \end{split}
+  \end{equation}
+  
+\end{enumerate}
+
+\subsection{Lapisan Readability}
+
+Lapisan keterbacaan mengukur kompleksitas linguistik teks secara keseluruhan melalui tiga fitur yang berfokus pada panjang kalimat, kemudahan baca, dan keragaman kosakata. Ketiga fitur ini memiliki rumus yang dideskripsikan secara eksplisit dalam literatur stilometri untuk deteksi teks AI \cite{Analysis}\cite{Tschuggnall2015}.
+
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+  \item Average Sentence Length
+  
+  Average Sentence Length mengukur rata-rata jumlah kata per kalimat. Teks AI cenderung menghasilkan kalimat yang lebih panjang dan kompleks dibandingkan tulisan manusia \cite{Analysis}.
+  \begin{equation}
+  \label{eq:21}
+  \begin{split}
+  \mathrm{avg}\_\mathrm{sent}\_\mathrm{len}=\frac{\text{total\ kata}}{\text{jumlah\ kalimat}}
+  \end{split}
+  \end{equation}
+
+  \item Flesch Reading Ease
+  
+  Flesch Reading Ease adalah skor keterbacaan berskala 0–100; semakin tinggi nilainya semakin mudah dibaca. Teks AI cenderung mendapat skor lebih rendah karena kalimatnya lebih panjang dan katanya lebih bersuku kata banyak \cite{Analysis}.
+  \begin{equation}
+  \label{eq:22}
+  \begin{split}
+  \text{Flesch=206.835-1.015}\frac{\text{total\ kata}}{\text{total\ kalimat}}\text{-84.6\ }\frac{\text{total\ suku\ kata}}{\text{total\ kata}}
+  \end{split}
+  \end{equation}
+
+  \item Hapax Legomenon Rate
+  
+  Hapax legomenon adalah kata yang hanya muncul tepat satu kali dalam teks. Hapax Legomenon Rate mengukur proporsi kata hapax terhadap total kosakata unik dan digunakan sebagai indikator kekayaan leksikal yang lebih sensitif dari TTR \cite{Tschuggnall2015}\cite{Analysis}.
+  \begin{equation}
+  \label{eq:23}
+  \begin{split}
+  \mathrm{hapax}=\frac{\left|\left\{w\in V\mid \mathrm{freq}\left(w\right)=1\right\}\right|}{\left|V\right|}
+  \end{split}
+  \end{equation}
+
+  \item Gunning fog
+  
+  Gunning Fog Index mengukur tingkat kesulitan membaca teks berdasarkan panjang kalimat dan proporsi kata kompleks (tiga suku kata atau lebih). Berbeda dengan Flesch Reading Ease yang menggunakan total suku kata, Gunning Fog secara spesifik menekankan pada kata-kata panjang sebagai indikator kompleksitas \cite{Analysis}. Teks AI cenderung menggunakan kata-kata panjang dan akademik sehingga menghasilkan nilai Gunning Fog yang lebih tinggi dibandingkan tulisan manusia.
+  \begin{equation}
+  \label{eq:24}
+  \begin{split}
+  \text{Gunning\ Fog=0.4×}\left(\frac{\left|\text{words}\right|}{\left|\text{sentences}\right|}\text{+100×}\frac{\left|\text{complex\_words}\right|}{\left|\text{words}\right|}\right)
+  \end{split}
+  \end{equation}
+
+\end{enumerate}
+
+\subsection{Random Forest}
+
+Random Forest adalah algoritma ensemble learning yang membangun sejumlah pohon keputusan (decision trees) secara independen dan mengagregasi hasilnya melalui majority voting. Beberapa algoritma klasifikasi diuji untuk deteksi teks AI menggunakan fitur stilometri, dan Random Forest menghasilkan performa terbaik dibandingkan algoritma lainnya \cite{Of2026}.
+\begin{equation}
+\label{eq:25}
+\begin{split}
+\hat{y}=\arg{\max_{c\in C}{\sum_{t=1}^{T} {1}}}\left[h\left(t\right)=c\right]
+\end{split}
+\end{equation}
+
+\subsection{BERT}
+
+BERT (Bidirectional Encoder Representations from Transformers) adalah model deep learning berbasis arsitektur transformer yang dilatih untuk memahami konteks kata secara dua arah dari kiri ke kanan dan kanan ke kiri secara bersamaan \cite{H2025}. Proses fine-tuning BERT memungkinkan model yang sudah dilatih pada korpus besar diadaptasi untuk tugas klasifikasi spesifik seperti deteksi teks buatan AI dengan menambahkan lapisan klasifikasi pada bagian akhir model.
+
+\subsection{FastAPI}
+
+FastAPI adalah web framework modern berbasis Python yang dirancang untuk membangun REST API dengan performa tinggi dan kemudahan penggunaan. Dibandingkan dengan framework Python lain seperti Flask dan Django, FastAPI menawarkan performa yang lebih cepat berkat dukungan pemrosesan asinkron berbasis ASGI (Asynchronous Server Gateway Interface) serta validasi data bawaan yang tidak dimiliki keduanya \cite{Lee2023}. Kemampuan FastAPI dalam mengintegrasikan model machine learning berformat .pkl menjadikannya pilihan yang tepat untuk membangun sistem prediksi berbasis web secara efisien.
 
 \section{PENELITIAN TERKAIT}
 
-Penelitian terkait memuat hasil penelitian pihak lain yang mempunyai \textit{Problem}
-yang sama dengan penelitian kita, tetapi dengan menggunakan \textit{Uniqueness} yang
-berbeda. Ceritakan bagaimana penelitian-penelitian terkait telah mencoba menyelesaikan
-permasalahan yang sama, dengan cara mereka masing-masing, yang ditunjukkan dengan
-kutipan terhadap pustaka. Penelitian terkait yang baik melibatkan kajian pustaka yang
-relevan dan terpercaya dari jurnal ilmiah internasional ataupun nasional, presentasi
-ilmiah internasional ataupun nasional, dan buku atau catatan rujukan ilmiah. Penulis
-harus mencantumkan sumber referensi pada daftar pustaka manakala melakukan rujukan dan
-kutipan dari pihak lain secara jujur dan benar seperti ini \cite{jurnal_contoh}.
-Pencantuman sumber referensi perlu dilakukan baik terhadap kutipan langsung ataupun
-kutipan tidak langsung (parafrase).
+Penelitian terkait memiliki peran penting dalam memberikan landasan dan perbandingan terhadap penelitian yang akan dilakukan. Berikut adalah beberapa penelitian yang relevan dengan permasalahan deteksi teks buatan AI.
+\par Pertama, penelitian yang dilakukan oleh Suryadi et al. dengan judul “Robust Detection of AI-Generated Text via Hybrid mBERT and Stylometric Feature Modeling” [1]. Penelitian ini mengusulkan pendekatan hibrida yang menggabungkan 18 fitur stilometri dengan embedding dari model mBERT menggunakan dataset DAIGT v4. Hasil eksperimen menunjukkan bahwa pendekatan hibrida mencapai akurasi 98,9\% dan F1-score 99,2\%, melampaui mBERT yang berdiri sendiri dengan akurasi 95,8\%. Penelitian ini membuktikan bahwa penambahan fitur stilometri secara signifikan meningkatkan kemampuan deteksi model berbasis transformer.
+\par Kedua, penelitian yang dilakukan oleh Jin et al. dengan judul “Generative Pre-trained Transformer Text Recognition Based on Structured Lexical Semantic and Robustly Optimized Semantic Convolutional Neural Network” [2]. Penelitian ini menambahkan 51 fitur statistik leksikal pada model RoBERTa dan mengujinya pada teks yang telah ditulis ulang (paraphrased). Hasilnya menunjukkan peningkatan akurasi sebesar 7,3\% dibandingkan model semantik murni, mengonfirmasi bahwa fitur leksikal struktural tetap efektif bahkan pada teks yang telah dimodifikasi untuk mengelabui detektor.
+\par Ketiga, penelitian yang dilakukan oleh Alhijawi et al. dengan judul “Dual-Branch Approach for AI-Generated Scientific Content Detection” [3]. Penelitian ini mengusulkan arsitektur dua cabang yang mengombinasikan representasi semantik dan struktural untuk mendeteksi konten ilmiah buatan AI. Evaluasi terhadap detektor komersial menunjukkan bahwa beberapa alat seperti ZeroGPT hanya mencapai akurasi sekitar 49,5\% pada konten akademik, yang mengonfirmasi bahwa pendekatan generik tidak dapat diandalkan untuk konteks spesifik.
+\par Keempat, penelitian yang dilakukan oleh Prakoso dan Lhaksmana dengan judul “Comparative Analysis of Machine Learning and Deep Learning Algorithms in Distinguishing AI-Generated and Human-Written Essays” [4]. Penelitian ini membandingkan performa algoritma machine learning klasik seperti SVM, Random Forest, dan Naive Bayes berbasis TF-IDF dengan model deep learning berbasis transformer seperti BERT, DistilBERT, dan RoBERTa pada dataset essay. Random Forest dengan TF-IDF mencapai akurasi hingga 91,06\%, sementara model berbasis transformer secara umum menghasilkan akurasi lebih tinggi namun membutuhkan sumber daya komputasi yang jauh lebih besar.
+\par Kelima, penelitian yang dilakukan oleh Sai Teja et al. dengan judul “Fine-Grained Detection of AI-Generated Text Using Sentence-Level Segmentation” [5]. Penelitian ini mengusulkan pendekatan deteksi pada tingkat kalimat (sentence-level) menggunakan model Transformer-NN-CRF untuk mendeteksi batas transisi antara teks tulisan manusia dan teks AI dalam satu dokumen yang bersifat kolaboratif. Pendekatan ini mengatasi keterbatasan metode klasifikasi tingkat dokumen yang tidak dapat mengidentifikasi bagian mana dari teks yang dihasilkan oleh AI.
 
-Untuk kutipan langsung dan pendek (1--2 baris), cara penulisan rujukan dilakukan dengan
-memberikan tanda petik ganda di awal dan akhir kutipan, ditulis miring, kemudian diiringi
-sumber referensi, seperti ini \textit{``Ini contoh penulisan rujukan untuk kutipan
-langsung dan pendek''}\cite{buku_contoh,jurnal_contoh}. Sedangkan untuk kutipan langsung
-dan panjang (lebih dari 2 baris), penulis dapat menuliskannya seperti di bawah ini.
-
-\begin{kutipanpanjang}
-  ``Ini contoh penulisan rujukan untuk kutipan langsung dan panjang, ditulis pada
-  paragraf terpisah dengan memberikan tanda petik ganda di awal dan akhir kutipan,
-  ukuran font 10 point dan margin kanan kiri yang masuk 10 mm dari batas penulisan,
-  kemudian diiringi dengan sumber referensi pada daftar pustaka.'' \cite{buku_contoh}
-\end{kutipanpanjang}
-
-Untuk kutipan tidak langsung (parafrase), penulis dapat menuliskan sumber referensi
-setelah kalimat parafrase selesai, seperti ini \cite{online_contoh}.
+\begin{table}[H]
+  \centering
+  \caption{Perbandingan Penelitian Terkait Deteksi Teks AI}
+  \label{tab:penelitian_terkait}
+  \begin{tblr}{
+    width = \textwidth,
+    colspec = {X[1.6,l,m] c X[1.4,l,m] X[1.5,l,m]},
+    hlines,
+    vlines,
+    row{1} = {font=\bfseries, c, m, bg=gray!15},
+  }
+    Judul dan Peneliti & Tahun & Metode Penelitian & Hasil \\
+    ``Robust Detection of AI-Generated Text via Hybrid mBERT and Stylometric Feature Modeling'', Farrell et al. \cite{Farrell2026} & 2026 & Hybrid mBERT + 18 fitur stilometri & Akurasi 98,9\%, F1-score 99,2\%. \\
+    ``Generative Pre-trained Transformer Text Recognition Based on Structured Lexical Semantic and Robustly Optimized Semantic Convolutional Neural Network'', Jin et al. \cite{Jin2027} & 2026 & RoBERTa + 51 fitur statistik leksikal & Peningkatan akurasi 7,3\% dibanding model semantik murni. \\
+    ``Dual-Branch Approach for AI-Generated Scientific Content Detection'', Alhijawi \& Awajan \cite{Alhijawi2026} & 2026 & Arsitektur dual-branch (semantik + struktural) & Detektor komersial ZeroGPT hanya 49,5\% akurasi pada konten akademik. \\
+    ``Comparative Analysis of Machine Learning and Deep Learning Algorithms in Distinguishing AI-Generated and Human-Written Essays'', Prakoso \& Lhaksmana \cite{H2025} & 2025 & SVM, Random Forest, Naive Bayes (TF-IDF) vs BERT, DistilBERT, RoBERTa & Random Forest TF-IDF: 91,06\%; transformer lebih tinggi namun komputasi lebih berat. \\
+    ``Fine-Grained Detection of AI-Generated Text Using Sentence-Level Segmentation'', Sai Teja et al. \cite{Teja2025} & 2025 & Transformer-NN-CRF (\textit{sentence-level}) & Mampu mendeteksi transisi teks AI dan manusia dalam satu dokumen kolaboratif. \\
+  \end{tblr}
+\end{table}
