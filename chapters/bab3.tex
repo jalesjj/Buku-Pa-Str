@@ -4,131 +4,55 @@
 %============================================================
 \chapter{DESAIN SISTEM}
 
-Uraian pada bab ini meliputi model yang digunakan, rancangan proyek akhir, variabel
-dalam proyek akhir, teknik pengumpulan data, dan analisis data. Awali pembahasan pada
-bab ini dengan penjelasan umum tentang solusi yang ditawarkan untuk menjawab
-\textit{Problem}.
-
 \section{DESKRIPSI SOLUSI}
 
-Deskripsikan solusi yang ditawarkan pada buku proyek akhir dengan jelas dan detail.
-Tuliskan secara argumentatif apa saja fitur-fitur yang ditawarkan sebagai solusi baru.
-Terangkan secara argumentatif tentang fitur-fitur unik pemodelan yang ditawarkan
-sehingga dapat digunakan untuk menyelesaikan permasalahan.
+Solusi yang diusulkan adalah mengembangkan sistem deteksi dini teks buatan AI pada tugas essay bahasa Inggris mahasiswa yang menggabungkan analisis stilometri dengan pendekatan machine learning. Sistem ini dirancang untuk mengatasi keterbatasan detektor komersial yang tidak mempertimbangkan karakteristik penulis non-native, sekaligus menyediakan antarmuka berbasis web agar dapat digunakan secara praktis oleh dosen maupun mahasiswa. Solusi ini mencakup:
+\begin{enumerate}
+	\item Modul Ekstraksi Fitur Stilometri yang menganalisis gaya penulisan secara kuantitatif melalui 18 fitur linguistik yang dikategorikan ke dalam empat lapisan (fonologis, morfologis, sintaktis, dan leksikal), sehingga perbedaan pola penulisan manusia dan teks buatan AI dapat direpresentasikan secara numerik.
+	\item Model Klasifikasi Random Forest yang dilatih menggunakan fitur stilometri untuk mengklasifikasikan teks sebagai human-written atau AI-generated dengan memanfaatkan mekanisme ensemble dan feature importance yang memungkinkan interpretasi kontribusi setiap fitur terhadap hasil deteksi.
+	\item Model BERT yang Di-fine-tune untuk klasifikasi berbasis representasi semantik kontekstual, sehingga sistem dapat menangkap pola linguistik yang tidak terdeteksi oleh fitur stilometri saja.
+	\item Antarmuka Aplikasi Web Berbasis FastAPI yang memungkinkan pengguna mengunggah teks essay dan mendapatkan hasil deteksi secara real-time, dilengkapi dengan tampilan skor kepercayaan (confidence score) dari masing-masing model.
+	\item Penyimpanan Riwayat Deteksi dengan MySQL yang mencatat setiap hasil analisis beserta metadata teks, sehingga dosen dapat memantau riwayat pengumpulan tugas mahasiswa secara terstruktur.
+\end{enumerate}
 
 \section{PERANCANGAN SISTEM}
 
-Desain sistem adalah penjelasan teknikal dari solusi yang berisi urutan-urutan proses
-yang akan dilakukan untuk menyelesaikan masalah. Akan lebih mudah dicerna apabila
-penjelasan ini disertai dengan diagram sistem secara \textit{high-level view} sehingga
-pembaca mendapatkan gambaran menyeluruh tentang desain sistem. Gambar~\ref{fig:desain_sistem}
-menunjukkan bagan desain sistem yang mempunyai tiga bagian.
+Alat bantu perancangan yang digunakan untuk menunjang Sistem Deteksi Dini AI-Generated Text pada Tugas Essay Bahasa Inggris Mahasiswa Menggunakan Analisis Stilometri dan Machine Learning adalah Use Case Diagram, Activity Diagram, Class Diagram, dan Entity Relationship Diagram (ERD).
 
-% ── Contoh gambar desain sistem ──────────────────────────────
+\subsection{Arsitektur sistem}
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.6\textwidth]{assets/gambar_desain_sistem.jpeg}
-  \caption{Desain sistem dari solusi yang ditawarkan}
-  \label{fig:desain_sistem}
+  \includegraphics[width=1\textwidth]{assets/diagram/arsitektur_diagram.drawio.png}
+  \caption{Diagram Arsitektur Sistem}
+  \label{fig:arsitektur_sistem}
 \end{figure}
 
-% ── Contoh gambar dengan sumber kutipan ──────────────────────
-% Sumber dicantumkan di bawah gambar, di atas caption, ukuran 11pt
+\subsection{Use Case Diagram}
+
+Use Case Diagram merupakan diagram pemodelan dalam Unified Modeling Language (UML) yang bertujuan untuk menggambarkan fungsionalitas perangkat lunak. Diagram ini memetakan interaksi antara aktor (pengguna) dan sistem untuk menjelaskan aktivitas apa saja yang dapat dilakukan dalam aplikasi tersebut.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.6\textwidth]{assets/gambar_kutipan.png}
-
-  \vspace{4pt}
-  {\FontSumber\itshape Sumber: http://alamat-sumber.com/gambar.jpg\par}
-
-  \caption{Contoh gambar kutipan}
-  \label{fig:gambar_kutipan}
+  \includegraphics[width=0.8\textwidth]{assets/diagram/use_case.png}
+  \caption{Use Case Diagram}
+  \label{fig:use_case}
 \end{figure}
 
-\subsection{Bagian 1}
-
-Disini penulis dapat menjelaskan lebih terperinci apa saja yang ada pada bagian
-ini. Jika bagian ini mempunyai sub bagian yang perlu diperjelas dalam
-pembahasan, penulis dapat menuliskannya dalam sub pembahasan pada bagian ini.
-
-\subsubsection{Aaaa}
-
-Disini penulis dapat membahas sub bagian Aaaa lebih terperinci. Deskripsi
-pembahasan seharusnya singkat, padat dan jelas, sehingga membuat pembaca
-memahami maksud penulis yang tertuang dalam tulisan. Apabila pembahasan penulis
-memerlukan penulisan persamaan matematis, penulis dapat menuliskannya seperti
-pada Persamaan~\ref{eq:binomial}.
-
-\begin{equation}
-  (x+a)^n = \sum_{k=0}^{n} \binom{n}{k} x^k a^{n-k}
-  \label{eq:binomial}
-\end{equation}
-
-\begin{equation}
-  (x+a)^n = \sum_{k=0}^{n} \binom{n}{k} x^k a^{n-k}
-  \label{eq:binomial}
-\end{equation}
-
-Persamaan~\ref{eq:binomial} menunjukkan teorema binomial yang merupakan dasar dari
-metode yang digunakan.
-
-% ── Contoh tabel dengan sumber kutipan (tabularray) ──────────
-\begin{table}[H]
-  \centering
-  \caption{Contoh penulisan tabel otomatis}
-  \label{tab:contoh1}
-  \begin{tblr}{colspec={c c c}}
-    Kolom 1  & Kolom 2  & Kolom 3  \\
-    Data 1-1 & Data 1-2 & Data 1-3 \\
-    Data 2-1 & Data 2-2 & Data 2-3 \\
-  \end{tblr}
-
-  \vspace{4pt}
-  {\FontSumber Sumber: Badan Pusat Pengolahan Data, 2026\par}
-\end{table}
-
-\subsection{Bagian 2}
-
-Disini penulis dapat menjelaskan lebih terperinci apa saja yang ada pada Bagian 2 ini.
-Deskripsi pembahasan seharusnya singkat, padat, dan jelas sehingga membuat pembaca
-memahami maksud penulis yang tertuang dalam tulisan.
-
-% ── Contoh tabel biasa tanpa sumber (tabularray) ─────────────
-\begin{table}[H]
-  \centering
-  \caption{Contoh penulisan tabel 2}
-  \label{tab:contoh2}
-  \begin{tblr}{colspec={c c c c}}
-    Kolom 1 & Kolom 2 & Kolom 3 & Kolom 4 \\
-    Data 1-1 & Data 1-2 & Data 1-3 & Data 1-4 \\
-    Data 2-1 & Data 2-2 & Data 2-3 & Data 2-4 \\
-  \end{tblr}
-\end{table}
-
-\begin{equation}
-  F = m \cdot a
-  \label{eq:newton}
-\end{equation}
-
-\subsection{Bagian 3}
-
-Disini penulis dapat menjelaskan lebih terperinci apa saja yang ada pada Bagian 3 ini.
-Deskripsi pembahasan seharusnya singkat, padat, dan jelas sehingga membuat pembaca
-memahami maksud penulis yang tertuang dalam tulisan.
-
-\subsubsection{Aaa}
-
-aaa
-
-\subsection{Bagian 4}
-
-bbb
-
-\subsubsection{Bbbb}
-
-bbbb
-
-\begin{equation}
-  \lim_{x \to c} f(x) = L
-  \label{eq:limit}
-\end{equation}
+Penjelasan singkat ini menguraikan fungsionalitas utama berdasarkan aktornya:
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+  \item Admin: Memiliki hak akses penuh terhadap sistem, mencakup pengelolaan pengguna dan pemantauan seluruh aktivitas deteksi. Fungsi yang dapat dilakukan Admin meliputi:
+    \begin{enumerate}[label=\alph*), leftmargin=*]
+      \item Login dan Logout.
+      \item Edit Password Sendiri.
+      \item Manajemen pengguna, meliputi Tambah Pengguna, Hapus Pengguna, dan Lihat Daftar Pengguna.
+      \item Export Hasil Deteksi.
+    \end{enumerate}
+  \item Dosen: Merupakan pengguna operasional yang menggunakan sistem untuk mendeteksi keaslian teks essay mahasiswa. Fungsi yang dapat dilakukan Dosen meliputi:
+  \begin{enumerate}[label=\alph*), leftmargin=*]
+      \item Login dan Logout.
+      \item Edit Password Sendiri.
+      \item Input Teks Essay secara langsung maupun Upload File Essay.
+      \item Lihat Hasil Deteksi beserta confidence score dari model Random Forest dan BERT.
+      \item Lihat Riwayat Deteksi dari pengecekan yang pernah dilakukan.
+      \item Export Hasil Deteksi
+    \end{enumerate}
+\end{enumerate}
